@@ -52,13 +52,13 @@ export default function AuthPage() {
                         throw new Error(data.message || "Authentication failed.");
                   }
 
-                  localStorage.setItem("user", JSON.stringify(data.user));
-                  setUser(data.user);
-
                   if (isSignUp) {
-                        setIsSignUp(false)
+                        alert("Registration successful. Please login.");
+                        setIsSignUp(false);
                   } else {
-                        navigate("/dashboard")
+                        localStorage.setItem("user", JSON.stringify(data.user));
+                        setUser(data.user);
+                        navigate("/dashboard");
                   }
 
             } catch (error) {
