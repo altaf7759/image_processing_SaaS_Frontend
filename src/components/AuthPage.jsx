@@ -28,7 +28,7 @@ export default function AuthPage() {
             e.preventDefault();
             setAuthSuccess(true);
 
-            const apiEndPoint = isSignUp ? "/api/auth/signup" : "/api/auth/login";
+            const apiEndPoint = isSignUp ? "/api/auth/register" : "/api/auth/login";
 
             // Flatten the payload out so it matches your backend requirements perfectly!
             const payload = isSignUp
