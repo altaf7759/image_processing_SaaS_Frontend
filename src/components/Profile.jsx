@@ -26,15 +26,15 @@ export default function UserProfileDashboard() {
       const [isUpgrading, setIsUpgrading] = useState(false);
 
       useEffect(() => {
-            if (user === null) {
+            if (user === null || localStorage.getItem("user") === null) {
                   navigate("/auth")
             }
-      }, [user])
+      }, [user, navigate]);
 
       // Fetch profile data on component mount
       const fetchProfileData = async () => {
             try {
-                  if (!user || !user.id) return
+                  if (user === null || user.id === null || localStorage.getItem("user") === null || user.id === undefined) return
                   setLoading(true);
                   const response = await fetch(`${VITE_BACKEND_URL}/api/profile/${user.id}`, {
                         method: "GET",
@@ -72,6 +72,9 @@ export default function UserProfileDashboard() {
                   // Firing request to your custom backend service API gateway path
                   const response = await fetch(`${VITE_BACKEND_URL}/api/subscriptions/${targetPlanId}`, {
                         method: 'POST',
+                        headers: {
+                              'Content-Type': 'application/json'
+                        },
                         credentials: "include",
                         body: JSON.stringify({
                               auto_renew: false
