@@ -25,27 +25,33 @@ export default function UserProfileDashboard() {
       // New state to manage button loading during an active API upgrade request
       const [isUpgrading, setIsUpgrading] = useState(false);
 
-      useEffect(() => {
-            if (user === null || localStorage.getItem("user") === null) {
-                  navigate("/auth")
-            }
-      }, [user, navigate]);
-
       // Fetch profile data on component mount
       const fetchProfileData = async () => {
+            if (!user?.id || !localStorage.getItem("user")) {
+                  setLoading(false);
+                  return;
+            }
+
             try {
-                  if (user === null || user.id === null || localStorage.getItem("user") === null || user.id === undefined) return
                   setLoading(true);
-                  const response = await fetch(`${VITE_BACKEND_URL}/api/profile/${user.id}`, {
-                        method: "GET",
-                        credentials: "include"
-                  });
+                  setError(null);
+
+                  const response = await fetch(
+                        `${VITE_BACKEND_URL}/api/profile/${user.id}`,
+                        {
+                              method: "GET",
+                              credentials: "include",
+                        }
+                  );
 
                   if (!response.ok) {
-                        throw new Error(`Failed to fetch profile data: ${response.statusText}`);
+                        throw new Error(
+                              `Failed to fetch profile data: ${response.status}`
+                        );
                   }
 
                   const json = await response.json();
+
                   setData(json.profileData);
             } catch (err) {
                   setError(err.message);
@@ -55,8 +61,12 @@ export default function UserProfileDashboard() {
       };
 
       useEffect(() => {
-            fetchProfileData();
-      }, [user]);
+            if (user === null && localStorage.getItem("user") === null) {
+                  navigate("/auth")
+            } else {
+                  fetchProfileData();
+            }
+      }, [user, navigate]);
 
       // ASYNCHRONOUS HANDLER FOR TIER UPGRADE INTERACTION
       const handlePlanAction = async (planName, targetPlanId, isCurrentPlan) => {
